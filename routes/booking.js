@@ -1,34 +1,20 @@
 import express from "express";
-import Booking from "../models/Booking.js";
+import { createBooking, getBookings, updateBooking, deleteBooking, getAllBookings, adminUpdateBooking, adminDeleteBooking } from "../controllers/bookingController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Create booking
-router.post("/", authMiddleware, async (req, res) => {
-  try {
-    const { car, startDate, endDate } = req.body;
-    const booking = new Booking({
-      user: req.user.id,
-      car,
-      startDate,
-      endDate,
-    });
-    await booking.save();
-    res.json(booking);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+//User routes
+router.post("/", authMiddleware, createBooking);   // Create booking
+router.get("/", authMiddleware, getBookings);      // Get user bookings
+router.put("/:id", authMiddleware, updateBooking);     // Update booking
+router.delete("/:id", authMiddleware, deleteBooking);  // Delete booking
 
-// Get user bookings
-router.get("/", authMiddleware, async (req, res) => {
-  try {
-    const bookings = await Booking.find({ user: req.user.id }).populate("car");
-    res.json(bookings);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+//Admin routes
+router.get("/admin", protect, adminOnly, getAllBookings);
+router.put("/admin/:id", protect, adminOnly, adminUpdateBooking);
+router.delete("/admin/:id", protect, adminOnly, adminDeleteBooking);
+
+
 
 export default router;
