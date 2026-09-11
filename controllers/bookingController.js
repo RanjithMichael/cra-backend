@@ -1,20 +1,61 @@
 import Booking from "../models/Booking.js";
+import Car from "../models/Car.js";
 
 // Create booking (user only)
 export const createBooking = async (req, res) => {
   try {
     const { car, startDate, endDate } = req.body;
+
+    // Validate dates
+    if (new Date(startDate) >= new Date(endDate)) {
+      return res.status(400).json({ message: "End date must be after start date" });
+    }
+
+    // Check overlapping confirmed bookings
+    const overlapping = await Booking.findOne({
+      car,
+      status: "confirmed",
+      startDate: { $lte: endDate },
+      endDate: { $gte: startDate }
+    });
+
+    if (overlapping) {
+      return res.status(400).json({ message: "Car not available for selected dates" });
+    }
+
+    // Fetch car details to get daily rate
+    const carDetails = await Car.findById(car);
+    if (!carDetails) {
+      return res.status(404).json({ message: "Car not found" });
+    }
+
+    // Calculate number of days
+    const days = Math.ceil(
+      (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)
+    );
+
+    // Calculate total cost
+    const totalCost = days * carDetails.dailyRate;
+
+    // Create booking with payment info
     const booking = await Booking.create({
       user: req.user.id,
       car,
       startDate,
       endDate,
+      status: "pending",
+      payment: {
+        amount: totalCost,
+        currency: "USD",
+        status: "unpaid",
+      },
     });
-    res.status(201).json(booking);
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-};
+
+      res.status(201).json(booking);
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  };
 
 // Get bookings (user sees own, admin sees all)
 export const getBookings = async (req, res) => {
@@ -41,8 +82,29 @@ export const updateBooking = async (req, res) => {
     const booking = await Booking.findOne(filter);
     if (!booking) return res.status(404).json({ message: "Booking not found" });
 
-    booking.startDate = req.body.startDate || booking.startDate;
-    booking.endDate = req.body.endDate || booking.endDate;
+    // Update dates if provided
+    if (req.body.startDate) booking.startDate = req.body.startDate;
+    if (req.body.endDate) booking.endDate = req.body.endDate;
+
+    // If dates changed, recalculate payment amount
+    if (req.body.startDate || req.body.endDate) {
+      const carDetails = await Car.findById(booking.car);
+      if (!carDetails) {
+        return res.status(404).json({ message: "Car not found" });
+      }
+
+      // Validate new dates
+      if (new Date(booking.startDate) >= new Date(booking.endDate)) {
+        return res.status(400).json({ message: "End date must be after start date" });
+      }
+
+      const days = Math.ceil(
+        (new Date(booking.endDate) - new Date(booking.startDate)) / (1000 * 60 * 60 * 24)
+      );
+
+      booking.payment.amount = days * carDetails.dailyRate;
+      booking.payment.status = "unpaid"; // reset if dates change
+    }
 
     const updatedBooking = await booking.save();
     res.json(updatedBooking);
@@ -50,7 +112,6 @@ export const updateBooking = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
 // Delete booking (user deletes own, admin can delete any)
 export const deleteBooking = async (req, res) => {
   try {
@@ -91,6 +152,22 @@ export const adminUpdateBooking = async (req, res) => {
 
     const updatedBooking = await booking.save();
     res.json(updatedBooking);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+//Admin: update booking status
+
+export const updateBookingStatus = async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+    if (!booking) return res.status(404).json({ message: "Booking not found" });
+
+    booking.status = req.body.status || booking.status;
+    const updated = await booking.save();
+
+    res.json(updated);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
