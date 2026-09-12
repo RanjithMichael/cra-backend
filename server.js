@@ -2,7 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-
+import bookingRoutes from "./routes/booking.js";
 import authRoutes from "./routes/authRoutes.js";
 import carRoutes from "./routes/car.js";
 
@@ -26,6 +26,7 @@ mongoose
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/cars", carRoutes);
+app.use("/api/bookings", bookingRoutes);
 
 // Root route
 app.get("/", (req, res) => {

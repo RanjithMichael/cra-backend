@@ -1,21 +1,19 @@
 import express from "express";
 import { createBooking, getBookings, updateBooking, deleteBooking, getAllBookings, adminUpdateBooking, adminDeleteBooking, updateBookingStatus} from "../controllers/bookingController.js";
-import authMiddleware from "../middleware/authMiddleware.js";
+import {protect, adminOnly} from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 //User routes
-router.post("/", authMiddleware, createBooking);   // Create booking
-router.get("/", authMiddleware, getBookings);      // Get user bookings
-router.put("/:id", authMiddleware, updateBooking);     // Update booking
-router.delete("/:id", authMiddleware, deleteBooking);  // Delete booking
+router.post("/", protect, createBooking);   // Create booking
+router.get("/", protect, getBookings);      // Get user bookings
+router.put("/:id", protect, updateBooking);     // Update booking
+router.delete("/:id", protect, deleteBooking);  // Delete booking
 
 //Admin routes
 router.get("/admin", protect, adminOnly, getAllBookings);
 router.put("/admin/:id", protect, adminOnly, adminUpdateBooking);
 router.delete("/admin/:id", protect, adminOnly, adminDeleteBooking);
 router.patch("/admin/:id/status", protect, adminOnly, updateBookingStatus);
-
-
 
 export default router;
