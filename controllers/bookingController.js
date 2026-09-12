@@ -4,6 +4,9 @@ import Car from "../models/Car.js";
 // Create booking (user only)
 export const createBooking = async (req, res) => {
   try {
+    // Debug logs
+    console.log("Request body:", req.body);
+    console.log("User from token:", req.user);
     const { carId, startDate, endDate } = req.body;
 
     // Validate dates
@@ -24,7 +27,7 @@ export const createBooking = async (req, res) => {
     }
 
     // Fetch car details to get daily rate
-    const carDetails = await Car.findById(car);
+    const carDetails = await Car.findById(carId);
     if (!carDetails) {
       return res.status(404).json({ message: "Car not found" });
     }
