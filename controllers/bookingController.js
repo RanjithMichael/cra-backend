@@ -4,7 +4,7 @@ import Car from "../models/Car.js";
 // Create booking (user only)
 export const createBooking = async (req, res) => {
   try {
-    const { car, startDate, endDate } = req.body;
+    const { carId, startDate, endDate } = req.body;
 
     // Validate dates
     if (new Date(startDate) >= new Date(endDate)) {
@@ -13,7 +13,7 @@ export const createBooking = async (req, res) => {
 
     // Check overlapping confirmed bookings
     const overlapping = await Booking.findOne({
-      car,
+      car: carId,
       status: "confirmed",
       startDate: { $lte: endDate },
       endDate: { $gte: startDate }
@@ -40,7 +40,7 @@ export const createBooking = async (req, res) => {
     // Create booking with payment info
     const booking = await Booking.create({
       user: req.user.id,
-      car,
+      car: carId,
       startDate,
       endDate,
       status: "pending",
