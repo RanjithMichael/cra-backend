@@ -46,6 +46,23 @@ router.post("/upload", protect, adminOnly, upload.single("image"), async (req, r
   }
 });
 
+// New route: update existing car image
+router.put("/:id/image", protect, adminOnly, upload.single("image"), async (req, res) => {
+  try {
+    const result = await cloudinary.uploader.upload(req.file.path);
+
+    const car = await Car.findById(req.params.id);
+    if (!car) {
+      return res.status(404).json({ message: "Car not found" });
+    }
+
+    car.image = result.secure_url; // replace old image URL
+    await car.save();
+
+    res.json({ message: "Car image updated", car });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;
-
-
