@@ -23,7 +23,7 @@ router.get("/:id", getCarById);
 router.put("/:id", protect, adminOnly, updateCar);
 router.delete("/:id", protect, adminOnly, deleteCar);
 
-// New route: upload car with image
+// New route: add car with image upload
 router.post("/upload", protect, adminOnly, upload.single("image"), async (req, res) => {
   try {
     const result = await cloudinary.uploader.upload(req.file.path);
@@ -66,3 +66,4 @@ router.put("/:id/image", protect, adminOnly, upload.single("image"), async (req,
 });
 
 export default router;
+
