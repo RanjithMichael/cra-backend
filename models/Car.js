@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 
 const CarSchema = new mongoose.Schema(
   {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     make: {
       type: String,
       required: true,
@@ -23,6 +28,10 @@ const CarSchema = new mongoose.Schema(
     available: {
       type: Boolean,
       default: true,
+    },
+    image: {
+      type: String, // store image URL
+      default: "",
     },
   },
   { timestamps: true }

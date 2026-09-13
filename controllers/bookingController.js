@@ -4,9 +4,9 @@ import Car from "../models/Car.js";
 // Create booking (user only)
 export const createBooking = async (req, res) => {
   try {
-    // Debug logs
     console.log("Request body:", req.body);
     console.log("User from token:", req.user);
+
     const { carId, startDate, endDate } = req.body;
 
     // Validate dates
@@ -37,12 +37,12 @@ export const createBooking = async (req, res) => {
       (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)
     );
 
-    // Calculate total cost
-    const totalCost = days * carDetails.dailyRate;
+    // ✅ Use pricePerDay instead of dailyRate
+    const totalCost = days * carDetails.pricePerDay;
 
     // Create booking with payment info
     const booking = await Booking.create({
-      user: req.user.id,
+      user: req.user._id,   // use _id from token
       car: carId,
       startDate,
       endDate,
@@ -54,26 +54,32 @@ export const createBooking = async (req, res) => {
       },
     });
 
-      res.status(201).json(booking);
-    } catch (error) {
-      res.status(500).json({ message: "Server error" });
-    }
-  };
+    res.status(201).json(booking);
+  } catch (error) {
+    console.error("Booking creation error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 // Get bookings (user sees own, admin sees all)
 export const getBookings = async (req, res) => {
   try {
     let bookings;
     if (req.user.role === "admin") {
-      bookings = await Booking.find().populate("car user");
+      bookings = await Booking.find()
+        .populate("car", "make model year pricePerDay available image")
+        .populate("user", "name email");
     } else {
-      bookings = await Booking.find({ user: req.user.id }).populate("car");
+      bookings = await Booking.find({ user: req.user._id })
+        .populate("car", "make model year pricePerDay available image");
     }
     res.json(bookings);
   } catch (error) {
+    console.error("Error fetching bookings:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 // Update booking (user updates own, admin can update any)
 export const updateBooking = async (req, res) => {
