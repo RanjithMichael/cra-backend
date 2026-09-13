@@ -6,6 +6,7 @@ import bookingRoutes from "./routes/booking.js";
 import authRoutes from "./routes/authRoutes.js";
 import carRoutes from "./routes/car.js";
 
+
 dotenv.config();
 
 const app = express();

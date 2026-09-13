@@ -73,6 +73,7 @@ export const getBookings = async (req, res) => {
       bookings = await Booking.find({ user: req.user._id })
         .populate("car", "make model year pricePerDay available image");
     }
+    console.log("Populated bookings:", JSON.stringify(bookings, null, 2));
     res.json(bookings);
   } catch (error) {
     console.error("Error fetching bookings:", error);

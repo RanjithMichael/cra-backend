@@ -9,6 +9,9 @@ router.post("/", protect, createBooking);   // Create booking
 router.get("/", protect, getBookings);      // Get user bookings
 router.put("/:id", protect, updateBooking);     // Update booking
 router.delete("/:id", protect, deleteBooking);  // Delete booking
+// Allow users to cancel their own bookings
+router.patch("/:id/status", protect, updateBookingStatus);
+
 
 //Admin routes
 router.get("/admin", protect, adminOnly, getAllBookings);
