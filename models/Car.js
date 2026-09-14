@@ -8,8 +8,11 @@ const CarSchema = new mongoose.Schema(
     year: { type: Number, required: true, min: 2000 },
     pricePerDay: { type: Number, required: true, min: 1 },
     available: { type: Boolean, default: true },
-    image: { type: String, default: "" },
     category: { type: String, enum: ["SUV", "Sedan", "Hatchback", "Luxury"], default: "Sedan" },
+    image: {
+      url: { type: String },
+      public_id: { type: String },
+    },
     description: { type: String, trim: true },
   },
   { timestamps: true }
