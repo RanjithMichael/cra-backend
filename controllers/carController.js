@@ -1,16 +1,28 @@
-import fs from "fs";
 import Car from "../models/Car.js";
 import cloudinary from "../utils/cloudinary.js";
 
-// Add a new car (with optional image upload)
+// Helper: upload buffer directly to Cloudinary
+const uploadToCloudinary = (fileBuffer) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: "car_rental/cars" },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      }
+    );
+    stream.end(fileBuffer);
+  });
+};
+
+// Add a new car (image goes straight to Cloudinary)
 export const addCar = async (req, res) => {
   try {
     let imageData = null;
 
     if (req.file) {
-      const result = await cloudinary.uploader.upload(req.file.path);
+      const result = await uploadToCloudinary(req.file.buffer);
       imageData = { url: result.secure_url, public_id: result.public_id };
-      fs.unlinkSync(req.file.path); // cleanup temp file
     }
 
     const car = new Car({
@@ -61,17 +73,14 @@ export const updateCar = async (req, res) => {
     const car = await Car.findById(req.params.id);
     if (!car) return res.status(404).json({ error: "Car not found" });
 
-    // If a new image is uploaded, replace the old one
     if (req.file) {
-      if (car.image && car.image.public_id) {
+      if (car.image?.public_id) {
         await cloudinary.uploader.destroy(car.image.public_id);
       }
-      const result = await cloudinary.uploader.upload(req.file.path);
+      const result = await uploadToCloudinary(req.file.buffer);
       car.image = { url: result.secure_url, public_id: result.public_id };
-      fs.unlinkSync(req.file.path);
     }
 
-    // Update other fields
     car.name = req.body.name || car.name;
     car.make = req.body.make || car.make;
     car.model = req.body.model || car.model;
@@ -94,8 +103,7 @@ export const deleteCar = async (req, res) => {
     const car = await Car.findById(req.params.id);
     if (!car) return res.status(404).json({ error: "Car not found" });
 
-    // Delete image from Cloudinary if exists
-    if (car.image && car.image.public_id) {
+    if (car.image?.public_id) {
       await cloudinary.uploader.destroy(car.image.public_id);
     }
 
