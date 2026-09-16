@@ -1,19 +1,28 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import dotenv from "dotenv";
-import bookingRoutes from "./routes/booking.js";
+
+import cloudinary from "./utils/cloudinary.js";
+
 import authRoutes from "./routes/authRoutes.js";
 import carRoutes from "./routes/car.js";
-
-
-dotenv.config();
+import bookingRoutes from "./routes/booking.js";
 
 const app = express();
 
 // Middleware
 app.use(express.json());
 app.use(cors());
+
+// Debug log to confirm Cloudinary config
+console.log("Cloudinary config:", {
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY ? "✔️ loaded" : "❌ missing",
+  api_secret: process.env.CLOUDINARY_API_SECRET ? "✔️ loaded" : "❌ missing",
+});
 
 // MongoDB connection
 mongoose
