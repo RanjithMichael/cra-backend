@@ -6,18 +6,28 @@ const generateToken = (id, role) => {
 };
 
 export const registerUser = async (req, res) => {
-  const { name, email, password, role} = req.body;
+  const { name, email, password, role } = req.body;
   try {
     const userExists = await User.findOne({ email });
-    if (userExists) return res.status(400).json({ message: "User already exists" });
+    if (userExists) {
+      return res.status(400).json({ message: "User already exists" });
+    }
 
-    
+    // Basic validation
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+    if (password.length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
+    }
+
     const user = await User.create({
       name,
       email,
       password,
-      role: role || "user" 
+      role: role || "user",
     });
+
     res.status(201).json({
       _id: user._id,
       name: user.name,
@@ -29,6 +39,7 @@ export const registerUser = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
