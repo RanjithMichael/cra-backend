@@ -6,54 +6,74 @@ dotenv.config();
 
 const cars = [
   {
-    name: "Toyota Corolla",
-    make: "Toyota",
-    model: "Corolla",
+    name: "Maruti Swift",
+    make: "Maruti",
+    model: "Swift",
     year: 2022,
-    pricePerDay: 50,
+    pricePerDay: 40,
     available: true,
-    image: "https://example.com/corolla.jpg",
-    category: "Sedan",
-  },
-  {
-    name: "Honda Civic",
-    make: "Honda",
-    model: "Civic",
-    year: 2021,
-    pricePerDay: 55,
-    available: true,
-    image: "https://example.com/civic.jpg",
-    category: "Sedan",
-  },
-  {
-    name: "Ford Focus",
-    make: "Ford",
-    model: "Focus",
-    year: 2020,
-    pricePerDay: 45,
-    available: false,
-    image: "https://example.com/focus.jpg",
+    image: "https://example.com/swift.jpg",
     category: "Hatchback",
   },
   {
-    name: "Tesla Model 3",
-    make: "Tesla",
-    model: "Model 3",
+    name: "Hyundai Verna",
+    make: "Hyundai",
+    model: "Verna",
     year: 2023,
-    pricePerDay: 120,
+    pricePerDay: 60,
     available: true,
-    image: "https://example.com/model3.jpg",
+    image: "https://example.com/verna.jpg",
+    category: "Sedan",
+  },
+  {
+    name: "Mahindra Thar",
+    make: "Mahindra",
+    model: "Thar",
+    year: 2021,
+    pricePerDay: 90,
+    available: true,
+    image: "https://example.com/thar.jpg",
+    category: "SUV",
+  },
+  {
+    name: "BMW X5",
+    make: "BMW",
+    model: "X5",
+    year: 2022,
+    pricePerDay: 200,
+    available: true,
+    image: "https://example.com/x5.jpg",
     category: "Luxury",
   },
   {
-    name: "Toyota Fortuner",
-    make: "Toyota",
-    model: "Fortuner",
-    year: 2022,
-    pricePerDay: 250,
+    name: "Kia Seltos",
+    make: "Kia",
+    model: "Seltos",
+    year: 2023,
+    pricePerDay: 75,
     available: true,
-    image: "https://example.com/fortuner.jpg",
+    image: "https://example.com/seltos.jpg",
     category: "SUV",
+  },
+  {
+    name: "Honda Jazz",
+    make: "Honda",
+    model: "Jazz",
+    year: 2020,
+    pricePerDay: 45,
+    available: false,
+    image: "https://example.com/jazz.jpg",
+    category: "Hatchback",
+  },
+  {
+    name: "Mercedes-Benz C-Class",
+    make: "Mercedes-Benz",
+    model: "C-Class",
+    year: 2023,
+    pricePerDay: 220,
+    available: true,
+    image: "https://example.com/cclass.jpg",
+    category: "Luxury",
   },
 ];
 
@@ -62,7 +82,7 @@ const seedCars = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     await Car.deleteMany(); // clears old data
     await Car.insertMany(cars);
-    console.log("✅ Cars seeded successfully with categories!");
+    console.log("✅ Cars seeded successfully with new set!");
     process.exit();
   } catch (error) {
     console.error("❌ Seeding error:", error);
@@ -71,3 +91,4 @@ const seedCars = async () => {
 };
 
 seedCars();
+
