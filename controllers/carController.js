@@ -15,14 +15,20 @@ const uploadToCloudinary = (fileBuffer) => {
   });
 };
 
-// Add a new car (image goes straight to Cloudinary)
+// Add a new car
 export const addCar = async (req, res) => {
   try {
     let imageData = null;
 
+    // Case 1: file uploaded via multer
     if (req.file) {
       const result = await uploadToCloudinary(req.file.buffer);
       imageData = { url: result.secure_url, public_id: result.public_id };
+    }
+
+    // Case 2: frontend passed a Cloudinary URL directly
+    if (req.body.image && !req.file) {
+      imageData = { url: req.body.image };
     }
 
     const car = new Car({
@@ -31,8 +37,9 @@ export const addCar = async (req, res) => {
       model: req.body.model,
       year: req.body.year,
       pricePerDay: req.body.pricePerDay,
-      available: req.body.available,
+      available: req.body.available ?? true,
       category: req.body.category,
+      fuelType: req.body.fuelType,
       description: req.body.description,
       image: imageData,
     });
@@ -40,7 +47,8 @@ export const addCar = async (req, res) => {
     await car.save();
     res.status(201).json(car);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("❌ Error adding car:", err);
+    res.status(500).json({ error: "Failed to add car" });
   }
 };
 
@@ -73,6 +81,7 @@ export const updateCar = async (req, res) => {
     const car = await Car.findById(req.params.id);
     if (!car) return res.status(404).json({ error: "Car not found" });
 
+    // Replace image if new file uploaded
     if (req.file) {
       if (car.image?.public_id) {
         await cloudinary.uploader.destroy(car.image.public_id);
@@ -81,6 +90,12 @@ export const updateCar = async (req, res) => {
       car.image = { url: result.secure_url, public_id: result.public_id };
     }
 
+    // Or update with direct Cloudinary URL
+    if (req.body.image && !req.file) {
+      car.image = { url: req.body.image };
+    }
+
+    // Update other fields
     car.name = req.body.name || car.name;
     car.make = req.body.make || car.make;
     car.model = req.body.model || car.model;
@@ -88,12 +103,14 @@ export const updateCar = async (req, res) => {
     car.pricePerDay = req.body.pricePerDay || car.pricePerDay;
     car.available = req.body.available ?? car.available;
     car.category = req.body.category || car.category;
+    car.fuelType = req.body.fuelType || car.fuelType;
     car.description = req.body.description || car.description;
 
     await car.save();
     res.json(car);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("❌ Error updating car:", err);
+    res.status(500).json({ error: "Failed to update car" });
   }
 };
 
@@ -110,6 +127,7 @@ export const deleteCar = async (req, res) => {
     await car.deleteOne();
     res.json({ message: "Car deleted successfully" });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("❌ Error deleting car:", err);
+    res.status(500).json({ error: "Failed to delete car" });
   }
 };

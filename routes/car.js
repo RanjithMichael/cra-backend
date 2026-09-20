@@ -14,7 +14,7 @@ const router = express.Router();
 // Multer setup: keep file in memory (no local uploads folder)
 const upload = multer({ storage: multer.memoryStorage() });
 
-// ✅ Clean CRUD routes with direct Cloudinary streaming
+// ✅ CRUD routes
 router.post("/", protect, adminOnly, upload.single("image"), addCar);
 router.get("/", getCars);
 router.get("/:id", getCarById);
@@ -22,6 +22,7 @@ router.put("/:id", protect, adminOnly, upload.single("image"), updateCar);
 router.delete("/:id", protect, adminOnly, deleteCar);
 
 export default router;
+
 
 
 
