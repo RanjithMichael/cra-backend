@@ -16,13 +16,10 @@ const router = express.Router();
 // User routes
 router.post("/", protect, createBooking);          // Create booking
 router.get("/", protect, getBookings);             // Get bookings (role-based)
-router.get("/my", protect, async (req, res) => {   // Explicit "my bookings" route
+router.get("/my", protect, async (req, res) => {   // Get user's own bookings
   try {
-    const bookings = await getBookings(req, res);  // reuse controller logic
-    // If you want only the user's bookings regardless of role:
-    // const bookings = await Booking.find({ user: req.user.id }).populate("car");
-    // res.json(bookings);
-  } catch (err) {
+    const bookings = await getBookings(req, res);  
+} catch (err) {
     res.status(500).json({ message: "Server error" });
   }
 });
