@@ -1,7 +1,7 @@
+// backend/seedAdmin.js
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import bcrypt from "bcryptjs";
-import User from "./models/User.js";
+import User from "./models/User.js"; // adjust path if needed
 
 dotenv.config();
 
@@ -10,21 +10,18 @@ const seedAdmin = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     console.log("✅ MongoDB connected");
 
-    const hashedPassword = await bcrypt.hash("admin123", 10);
+    // Remove any existing admin user
+    await User.deleteOne({ email: "admin1@example.com" });
 
-    const adminExists = await User.findOne({ email: "admin@example.com" });
-    if (adminExists) {
-      console.log("⚠️ Admin already exists, skipping");
-    } else {
-      await User.create({
-        name: "Super Admin",
-        email: "admin@example.com",
-        password: hashedPassword,
-        role: "admin",
-      });
-      console.log("✅ Admin user seeded");
-    }
+    // Insert new admin with plain text password
+    const admin = await User.create({
+      name: "Admin",
+      email: "admin1@example.com",
+      password: "admin1234",   
+      role: "admin",
+    });
 
+    console.log("✅ Admin user seeded:", admin.email);
     mongoose.connection.close();
   } catch (err) {
     console.error("❌ Seeding error:", err);
