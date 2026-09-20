@@ -11,13 +11,13 @@ const seedAdmin = async () => {
     console.log("✅ MongoDB connected");
 
     // Remove any existing admin user
-    await User.deleteOne({ email: "admin1@example.com" });
+    await User.deleteOne({ email: "admin4@example.com" });
 
     // Insert new admin with plain text password
     const admin = await User.create({
-      name: "Admin",
-      email: "admin1@example.com",
-      password: "admin1234",   
+      name: "Admin4",
+      email: "admin4@example.com",
+      password: "admin1237",   
       role: "admin",
     });
 
