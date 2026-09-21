@@ -148,7 +148,43 @@ const cars = [
     category: "Budget",
     fuelType: "Petrol",
     description: "Entry-level hatchback, affordable and easy to maintain."
-  }
+  },
+  {
+  name: "Audi A4",
+  make: "Audi",
+  model: "A4",
+  year: 2022,
+  pricePerDay: 11000,
+  available: true,
+  image: "https://example.com/a4.jpg",
+  category: "Luxury",
+  fuelType: "Petrol",
+  description: "Premium sedan offering refined performance and comfort."
+},
+{
+  name: "Jeep Compass",
+  make: "Jeep",
+  model: "Compass",
+  year: 2023,
+  pricePerDay: 5500,
+  available: true,
+  image: "https://example.com/compass.jpg",
+  category: "SUV",
+  fuelType: "Diesel",
+  description: "Rugged SUV with off-road capability and modern features."
+},
+{
+  name: "Nissan Magnite",
+  make: "Nissan",
+  model: "Magnite",
+  year: 2022,
+  pricePerDay: 2800,
+  available: true,
+  image: "https://example.com/magnite.jpg",
+  category: "Budget",
+  fuelType: "Petrol",
+  description: "Affordable compact SUV with stylish design and efficient engine."
+}
 ];
 const seedCars = async () => {
   try {
