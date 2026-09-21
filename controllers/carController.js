@@ -18,7 +18,7 @@ const uploadToCloudinary = (fileBuffer) => {
 // Add a new car
 export const addCar = async (req, res) => {
   try {
-     console.log("Cloudinary current config:", cloudinary.config());
+    console.log("Cloudinary current config:", cloudinary.config());
     let imageData = null;
 
     // Case 1: file uploaded via multer
