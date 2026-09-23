@@ -43,6 +43,7 @@ export const addCar = async (req, res) => {
       fuelType: req.body.fuelType,
       description: req.body.description,
       image: imageData,
+      isPopular: req.body.isPopular ?? false, 
     });
 
     await car.save();
@@ -53,11 +54,15 @@ export const addCar = async (req, res) => {
   }
 };
 
-// Get all cars (with optional category filter)
+// Get all cars (with optional category or popular filter)
 export const getCars = async (req, res) => {
   try {
-    const { category } = req.query;
-    const filter = category ? { category } : {};
+    const { category, popular } = req.query;
+    let filter = {};
+
+    if (category) filter.category = category;
+    if (popular === "true") filter.isPopular = true; // 👈 filter popular cars
+
     const cars = await Car.find(filter);
     res.json(cars);
   } catch (err) {
@@ -106,6 +111,7 @@ export const updateCar = async (req, res) => {
     car.category = req.body.category || car.category;
     car.fuelType = req.body.fuelType || car.fuelType;
     car.description = req.body.description || car.description;
+    car.isPopular = req.body.isPopular ?? car.isPopular; // 👈 update popular flag
 
     await car.save();
     res.json(car);
