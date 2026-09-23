@@ -38,12 +38,14 @@ export const addCar = async (req, res) => {
       model: req.body.model,
       year: req.body.year,
       pricePerDay: req.body.pricePerDay,
+      seats: Number(req.body.seats),
       available: req.body.available ?? true,
       category: req.body.category,
       fuelType: req.body.fuelType,
+      transmission: req.body.transmission,
       description: req.body.description,
       image: imageData,
-      isPopular: req.body.isPopular ?? false, 
+      isPopular: req.body.isPopular ?? false,
     });
 
     await car.save();
@@ -61,7 +63,7 @@ export const getCars = async (req, res) => {
     let filter = {};
 
     if (category) filter.category = category;
-    if (popular === "true") filter.isPopular = true; // 👈 filter popular cars
+    if (popular === "true") filter.isPopular = true; //filter popular cars
 
     const cars = await Car.find(filter);
     res.json(cars);
@@ -110,8 +112,10 @@ export const updateCar = async (req, res) => {
     car.available = req.body.available ?? car.available;
     car.category = req.body.category || car.category;
     car.fuelType = req.body.fuelType || car.fuelType;
+    car.transmission = req.body.transmission || car.transmission;
     car.description = req.body.description || car.description;
-    car.isPopular = req.body.isPopular ?? car.isPopular; // 👈 update popular flag
+    car.seats = Number(req.body.seats) || car.seats;
+    car.isPopular = req.body.isPopular ?? car.isPopular;
 
     await car.save();
     res.json(car);

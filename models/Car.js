@@ -21,6 +21,12 @@ const CarSchema = new mongoose.Schema(
       required: true,
     },
 
+    transmission: {
+      type: String,
+      enum: ["Manual", "Automatic"],
+      required: true,
+    },
+
     seats: {
       type: Number,
       required: true,
@@ -35,11 +41,9 @@ const CarSchema = new mongoose.Schema(
 
     description: { type: String, trim: true },
 
-    
     isPopular: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
 
 export default mongoose.model("Car", CarSchema);
-
