@@ -49,18 +49,18 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
-    console.log("🔑 Login attempt:", { email, password }); // Debug
+    console.log("🔑 Login attempt:", { email, password });
 
     const user = await User.findOne({ email });
-    console.log("🔍 User found:", user); // Debug
+    console.log("🔍 User found:", user);
 
     if (user) {
-      console.log("🔑 Stored hash:", user.password); // Debug
+      console.log("🔑 Stored hash:", user.password);
       const isMatch = await user.matchPassword(password);
-      console.log("✅ Password match result:", isMatch); // Debug
+      console.log("✅ Password match result:", isMatch);
 
       if (isMatch) {
-        console.log("🎉 Login successful for:", user.email); // Debug
+        console.log("🎉 Login successful for:", user.email);
         return res.json({
           _id: user._id,
           name: user.name,
@@ -71,11 +71,10 @@ export const loginUser = async (req, res) => {
       }
     }
 
-    console.log("❌ Login failed for:", email); // Debug
+    console.log("❌ Login failed for:", email);
     res.status(401).json({ message: "Invalid credentials" });
   } catch (error) {
-    console.error("❌ Login error:", error); // Debug
+    console.error("❌ Login error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
-
