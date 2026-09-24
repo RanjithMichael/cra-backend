@@ -1,22 +1,22 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
-import User from "./models/User.js"; // adjust path if needed
+import User from "./models/User.js"; 
 
 dotenv.config();
 
 const users = [
   {
-    name: "Admin5",
-    email: "admin5@example.com",
-    password: "admin1239", // plain text here
+    name: "ranjith",
+    email: "admin6@example.com",
+    password: "ran_1991", 
     role: "admin",
   },
   {
-    name: "User5",
-    email: "demo5@example.com",
-    password: "user1239", // plain text here
-    role: "user",
+    name: "michael",
+    email: "user6@example.com",
+    password: "mic_1991",
+    role: "user"
   },
 ];
 
