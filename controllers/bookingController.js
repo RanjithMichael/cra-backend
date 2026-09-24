@@ -62,11 +62,11 @@ export const getBookings = async (req, res) => {
     let bookings;
     if (req.user.role === "admin") {
       bookings = await Booking.find()
-        .populate("car", "make model year pricePerDay available image, category, fuelType")
+        .populate("car", "make model year pricePerDay available image category transmission seats fuelType")
         .populate("user", "name email");
     } else {
       bookings = await Booking.find({ user: req.user._id })
-        .populate("car", "make model year pricePerDay available image, category, fuelType");
+        .populate("car", "make model year pricePerDay available image category transmission seats fuelType");
     }
     res.json(bookings);
   } catch (error) {

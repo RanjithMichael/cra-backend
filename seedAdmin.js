@@ -1,7 +1,7 @@
 // backend/seedAdmin.js
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import User from "./models/User.js"; // adjust path if needed
+import User from "./models/User.js"; 
 
 dotenv.config();
 
@@ -17,7 +17,7 @@ const seedAdmin = async () => {
     const admin = await User.create({
       name: "Admin5",
       email: "admin5@example.com",
-      password: "admin1239",   
+      password: "admin1239",
       role: "admin",
     });
 
